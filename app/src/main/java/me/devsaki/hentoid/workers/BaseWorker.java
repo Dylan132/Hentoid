@@ -158,7 +158,9 @@ public abstract class BaseWorker extends Worker {
 
     abstract void onInterrupt();
 
-    abstract void onClear();
+    public void onClear() {
+        // nothing
+    }
 
     abstract void getToWork(@NonNull Data input);
 }

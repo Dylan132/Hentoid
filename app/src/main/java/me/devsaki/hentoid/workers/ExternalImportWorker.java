@@ -78,11 +78,6 @@ public class ExternalImportWorker extends BaseWorker {
     }
 
     @Override
-    void onClear() {
-        // Nothing
-    }
-
-    @Override
     void getToWork(@NonNull Data input) {
         startImport(getApplicationContext());
     }
@@ -251,8 +246,8 @@ public class ExternalImportWorker extends BaseWorker {
 
         // If at least 2 subfolders and everyone of them ends with a number, we've got a multi-chapter book
         if (subFolders.size() >= 2) {
-            boolean allSubfoldersEndWithNumber = Stream.of(subFolders).map(DocumentFile::getName).withoutNulls().allMatch(n -> ENDS_WITH_NUMBER.matcher(n).matches());
-            if (allSubfoldersEndWithNumber) {
+            boolean allSubEndNum = Stream.of(subFolders).map(DocumentFile::getName).withoutNulls().allMatch(n -> ENDS_WITH_NUMBER.matcher(n).matches());
+            if (allSubEndNum) {
                 // Make certain folders contain actual books by peeking the 1st one (could be a false positive, i.e. folders per year '1990-2000')
                 int nbPicturesInside = explorer.countFiles(subFolders.get(0), ImageHelper.INSTANCE.getImageNamesFilter());
                 if (nbPicturesInside > 1) {

@@ -108,11 +108,6 @@ public class PrimaryImportWorker extends BaseWorker {
     }
 
     @Override
-    void onClear() {
-        // Nothing
-    }
-
-    @Override
     void getToWork(@NonNull Data input) {
         PrimaryImportData.Parser data = new PrimaryImportData.Parser(getInputData());
 
@@ -258,21 +253,7 @@ public class PrimaryImportWorker extends BaseWorker {
 
             // 4th pass : Import queue, bookmarks and renaming rules JSON
             dao = new ObjectBoxDAO(context);
-            try {
-                DocumentFile queueFile = explorer.findFile(context, rootFolder, Consts.QUEUE_JSON_FILE_NAME);
-                if (queueFile != null) importQueue(context, queueFile, dao, log);
-                else trace(Log.INFO, STEP_4_QUEUE_FINAL, log, "No queue file found");
-
-                DocumentFile bookmarksFile = explorer.findFile(context, rootFolder, Consts.BOOKMARKS_JSON_FILE_NAME);
-                if (bookmarksFile != null) importBookmarks(context, bookmarksFile, dao, log);
-                else trace(Log.INFO, STEP_4_QUEUE_FINAL, log, "No bookmarks file found");
-
-                DocumentFile rulesFile = explorer.findFile(context, rootFolder, Consts.RENAMING_RULES_JSON_FILE_NAME);
-                if (rulesFile != null) importRenamingRules(context, rulesFile, dao, log);
-                else trace(Log.INFO, STEP_4_QUEUE_FINAL, log, "No renaming rules file found");
-            } finally {
-                dao.cleanup();
-            }
+            importQueueBookMarksRules(explorer, dao, context, rootFolder, log);
         } catch (IOException | InterruptedException e) {
             Timber.w(e);
             // Restore interrupted state
@@ -294,6 +275,28 @@ public class PrimaryImportWorker extends BaseWorker {
 
             eventComplete(STEP_4_QUEUE_FINAL, bookFolders.size(), booksOK, booksKO, logFile);
             notificationManager.notify(new ImportCompleteNotification(booksOK, booksKO));
+        }
+    }
+
+    private void importQueueBookMarksRules(FileExplorer explorer,
+                                           CollectionDAO dao,
+                                           Context context,
+                                           DocumentFile rootFolder,
+                                           List<LogHelper.LogEntry> log) {
+        try {
+            DocumentFile queueFile = explorer.findFile(context, rootFolder, Consts.QUEUE_JSON_FILE_NAME);
+            if (queueFile != null) importQueue(context, queueFile, dao, log);
+            else trace(Log.INFO, STEP_4_QUEUE_FINAL, log, "No queue file found");
+
+            DocumentFile bookmarksFile = explorer.findFile(context, rootFolder, Consts.BOOKMARKS_JSON_FILE_NAME);
+            if (bookmarksFile != null) importBookmarks(context, bookmarksFile, dao, log);
+            else trace(Log.INFO, STEP_4_QUEUE_FINAL, log, "No bookmarks file found");
+
+            DocumentFile rulesFile = explorer.findFile(context, rootFolder, Consts.RENAMING_RULES_JSON_FILE_NAME);
+            if (rulesFile != null) importRenamingRules(context, rulesFile, dao, log);
+            else trace(Log.INFO, STEP_4_QUEUE_FINAL, log, "No renaming rules file found");
+        } finally {
+            dao.cleanup();
         }
     }
 
@@ -516,9 +519,7 @@ public class PrimaryImportWorker extends BaseWorker {
 
     private LogHelper.LogInfo buildLogInfo(boolean cleanup, StorageLocation location, @NonNull List<LogHelper.LogEntry> log) {
         LogHelper.LogInfo logInfo = new LogHelper.LogInfo((cleanup ? "cleanup_log_" : "import_log_") + location.name());
-        logInfo.setHeaderName(cleanup ? "Cleanup" : "Import");
-        logInfo.setNoDataMessage("No content detected.");
-        logInfo.setEntries(log);
+        logInfo.setUp(cleanup ? "Cleanup" : "Import", "No content detected.", log);
         return logInfo;
     }
 

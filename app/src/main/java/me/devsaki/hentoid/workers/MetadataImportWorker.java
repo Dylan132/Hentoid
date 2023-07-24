@@ -97,7 +97,7 @@ public class MetadataImportWorker extends BaseWorker {
     }
 
     @Override
-    void onClear() {
+    public void onClear() {
         notificationDisposables.clear();
         if (dao != null) dao.cleanup();
     }
@@ -109,12 +109,7 @@ public class MetadataImportWorker extends BaseWorker {
         startImport(
                 getApplicationContext(),
                 StringHelper.protect(data.getJsonUri()),
-                data.isAdd(),
-                data.isImportLibrary(),
-                data.getEmptyBooksOption(),
-                data.isImportQueue(),
-                data.isImportCustomGroups(),
-                data.isImportBookmarks()
+                data
         );
     }
 
@@ -124,13 +119,15 @@ public class MetadataImportWorker extends BaseWorker {
     private void startImport(
             @NonNull final Context context,
             @NonNull final String jsonUri,
-            boolean add,
-            boolean importLibrary,
-            int emptyBooksOption,
-            boolean importQueue,
-            boolean importCustomGroups,
-            boolean importBookmarks
+            MetadataImportData.Parser data
     ) {
+        boolean     add                = data.isAdd();
+        boolean     importLibrary      = data.isImportLibrary();
+        int         emptyBooksOption   = data.getEmptyBooksOption();
+        boolean     importQueue        = data.isImportQueue();
+        boolean     importCustomGroups = data.isImportCustomGroups();
+        boolean     importBookmarks    = data.isImportBookmarks();
+
         DocumentFile jsonFile = FileHelper.getFileFromSingleUriString(context, jsonUri);
         if (null == jsonFile) {
             trace(Log.ERROR, "Couldn't find metadata JSON file at %s", jsonUri);

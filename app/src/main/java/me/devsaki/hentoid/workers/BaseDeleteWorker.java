@@ -101,7 +101,7 @@ public abstract class BaseDeleteWorker extends BaseWorker {
     }
 
     @Override
-    void onClear() {
+    public void onClear() {
         dao.cleanup();
     }
 

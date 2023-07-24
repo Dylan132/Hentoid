@@ -50,11 +50,6 @@ public class UpdateDownloadWorker extends BaseWorker {
     }
 
     @Override
-    void onClear() {
-        // Nothing
-    }
-
-    @Override
     void getToWork(@NonNull Data input) {
         UpdateDownloadData.Parser data = new UpdateDownloadData.Parser(getInputData());
         String apkUrl = data.getUrl();

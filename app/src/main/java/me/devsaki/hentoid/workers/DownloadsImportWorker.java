@@ -77,7 +77,7 @@ public class DownloadsImportWorker extends BaseWorker {
     }
 
     @Override
-    void onClear() {
+    public void onClear() {
         notificationDisposables.clear();
         compositeDisposable.clear();
         if (cfHelper != null) cfHelper.clear();

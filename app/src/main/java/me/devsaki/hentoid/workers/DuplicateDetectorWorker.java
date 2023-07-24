@@ -82,7 +82,7 @@ public class DuplicateDetectorWorker extends BaseWorker {
     }
 
     @Override
-    void onClear() {
+    public void onClear() {
         if (!isStopped() && !isComplete())
             Preferences.setDuplicateLastIndex(currentIndex.get());
         else Preferences.setDuplicateLastIndex(-1);

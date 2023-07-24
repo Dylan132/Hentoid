@@ -143,7 +143,7 @@ public class ContentDownloadWorker extends BaseWorker {
     }
 
     @Override
-    void onClear() {
+    public void onClear() {
         EventBus.getDefault().unregister(this);
         compositeDisposable.clear();
 

@@ -159,6 +159,12 @@ class LogHelper {
         fun clear() {
             entries.clear()
         }
+
+        fun setUp(headerName: String, noDataMessage: String, log: MutableList<LogHelper.LogEntry>) {
+            this.setHeaderName(headerName);
+            this.setNoDataMessage(noDataMessage);
+            this.setEntries(log);
+        }
     }
 
     companion object {

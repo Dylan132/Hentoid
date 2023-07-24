@@ -59,7 +59,7 @@ public class UpdateJsonWorker extends BaseWorker {
     }
 
     @Override
-    void onClear() {
+    public void onClear() {
         notificationDisposables.clear();
         if (dao != null) dao.cleanup();
     }
